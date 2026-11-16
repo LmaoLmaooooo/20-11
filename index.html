@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chào Mừng Ngày Nhà Giáo Việt Nam 20/11</title>
+  <link rel="stylesheet" href="css/blackboard.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=639304470361110811">
+  <link rel="shortcut icon" href="favicon.ico?v=639304470361110811">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Viền gỗ bảng -->
+  <div class="board-frame">
+    <div class="board-inner">
+
+      <!-- Góc trang trí -->
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+
+      <!-- Đếm ngược -->
+      <div class="countdown-badge" id="countdownBadge"></div>
+
+      <!-- Màn hình nhập tên -->
+      <div id="intro-screen">
+        <div class="chalk-decoration top-deco">✦ ✦ ✦</div>
+
+        <h1 class="board-title chalk-flicker">
+          Chào Mừng Ngày<br>Nhà Giáo Việt Nam
+        </h1>
+        <div class="date-badge">20 / 11</div>
+
+        <p class="board-subtitle">Nhập tên thầy cô để gửi lời chúc</p>
+
+        <div class="chalk-input-wrapper">
+          <input
+            type="text"
+            id="nameInput"
+            class="chalk-input"
+            placeholder="✏️ Tên thầy cô..."
+            maxlength="40"
+            autocomplete="off"
+          >
+        </div>
+
+        <button class="chalk-btn" onclick="goToChalkLetter()">
+          ✍️ Viết Lên Bảng
+        </button>
+
+        <div class="chalk-decoration bottom-deco">— ❖ —</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bụi phấn container -->
+  <div id="dust-container"></div>
+
+  <script src="js/index.js"></script>
+</body>
+</html>
+
+

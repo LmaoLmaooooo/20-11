@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sổ Ký Ức — 20/11</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=639304470361110811">
+  <link rel="shortcut icon" href="favicon.ico?v=639304470361110811">
+  <link rel="stylesheet" href="css/memory.css">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Nền bảng đen viền gỗ -->
+  <div class="scene">
+
+    <!-- Panel trái: Hướng dẫn -->
+    <div class="sidebar">
+      <h2 class="sidebar-title">📖 Sổ Ký Ức</h2>
+      <p class="sidebar-desc">Viết lời chúc bằng tay lên trang giấy ô ly.<br>Nhấn nút để lưu ảnh kỷ niệm!</p>
+
+      <div class="tool-section">
+        <label class="tool-label">🖌️ Màu phấn</label>
+        <div class="color-palette" id="colorPalette">
+          <button class="color-btn active" data-color="#1e293b" style="background:#1e293b;"></button>
+          <button class="color-btn" data-color="#dc2626" style="background:#dc2626;"></button>
+          <button class="color-btn" data-color="#2563eb" style="background:#2563eb;"></button>
+          <button class="color-btn" data-color="#16a34a" style="background:#16a34a;"></button>
+          <button class="color-btn" data-color="#9333ea" style="background:#9333ea;"></button>
+          <button class="color-btn" data-color="#b45309" style="background:#b45309;"></button>
+        </div>
+      </div>
+
+      <div class="tool-section">
+        <label class="tool-label">✏️ Kích thước</label>
+        <input type="range" id="brushSize" min="1" max="20" value="3" class="brush-slider">
+        <span id="brushSizeLabel" class="brush-label">3px</span>
+      </div>
+
+      <div class="tool-section">
+        <label class="tool-label">🖼️ Ảnh trang trí</label>
+        <label class="upload-btn-label" for="imageUpload">
+          📤 Tải ảnh lên
+        </label>
+        <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+        <span class="upload-hint">Kéo thả ảnh trực tiếp lên sổ để trang trí</span>
+      </div>
+
+      <div class="tool-section">
+        <button class="action-btn erase-btn" id="eraseBtn">🧹 Tẩy</button>
+        <button class="action-btn clear-btn" id="clearBtn">🗑️ Xóa tất cả</button>
+      </div>
+
+      <div class="tool-section">
+        <button class="action-btn save-btn" id="saveBtn">💾 Lưu ảnh PNG</button>
+      </div>
+
+      <a class="back-link" href="chalk-letter.html">← Quay lại lời chúc</a>
+    </div>
+
+    <!-- Panel phải: Canvas sổ ô ly -->
+    <div class="notebook-wrap">
+      <!-- Header sổ -->
+      <div class="notebook-header">
+        <span class="notebook-title" id="notebookTitle">Lưu Bút — 20/11</span>
+        <span class="notebook-date">Năm học 2025 – 2026</span>
+      </div>
+
+      <!-- Trang ô ly -->
+      <div class="notebook-page-wrap">
+        <!-- Vạch đỏ dọc bên trái (margin) được tạo bằng CSS -->
+        <canvas id="notebookCanvas"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/memory.js"></script>
+  <script src="js/music.js"></script>
+</body>
+</html>
+
+

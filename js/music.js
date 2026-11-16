@@ -1,0 +1,231 @@
+// ============================================================
+// music.js — Quản lý nhạc nền & nút Bật/Tắt âm thanh toàn website
+// Hỗ trợ cả file MP3 (nếu có trong audio/) và bộ nhạc tổng hợp Web Audio API du dương
+// ============================================================
+
+(function () {
+  // Không hiển thị nút và không phát nhạc ở trang chủ index.html
+  const currentPath = window.location.pathname.toLowerCase();
+  if (currentPath.endsWith('index.html') || currentPath.endsWith('/') || currentPath === '') {
+    return;
+  }
+
+  // Tạo nút âm thanh nổi góc trên bên phải
+  const musicBtn = document.createElement('button');
+  musicBtn.id = 'bgMusicToggleBtn';
+  musicBtn.setAttribute('title', 'Bật / Tắt âm thanh');
+  musicBtn.innerHTML = `
+    <span class="music-icon">🎵</span>
+    <span class="music-text">Nhạc: Bật</span>
+  `;
+
+  // Thêm CSS cho nút âm thanh
+  const style = document.createElement('style');
+  style.textContent = `
+    #bgMusicToggleBtn {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid rgba(253, 230, 138, 0.5);
+      color: #fde68a;
+      font-family: 'Baloo 2', 'Quicksand', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-radius: 20px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+    #bgMusicToggleBtn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: #fde68a;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(253, 230, 138, 0.4);
+    }
+    #bgMusicToggleBtn.muted {
+      border-color: rgba(248, 250, 252, 0.3);
+      color: rgba(248, 250, 252, 0.5);
+      background: rgba(15, 23, 42, 0.6);
+    }
+    #bgMusicToggleBtn .music-icon {
+      font-size: 1.1rem;
+      display: inline-block;
+      animation: musicRotate 4s linear infinite;
+    }
+    #bgMusicToggleBtn.muted .music-icon {
+      animation: none;
+      filter: grayscale(1);
+    }
+    @keyframes musicRotate {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(15deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @media (max-width: 600px) {
+      #bgMusicToggleBtn {
+        top: 10px;
+        right: 12px;
+        padding: 5px 10px;
+        font-size: 0.8rem;
+      }
+      #bgMusicToggleBtn .music-text {
+        display: none;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+  document.body.appendChild(musicBtn);
+
+  let isMuted = localStorage.getItem('bg_music_muted') === 'true';
+
+  // 1. Thử phát từ audio file (nếu người dùng bỏ file bg-music.mp3 vào thư mục audio/)
+  const audioEl = new Audio('audio/bg-music.mp3');
+  audioEl.loop = true;
+  audioEl.volume = 0.5;
+
+  let useSynth = false;
+  let synthContext = null;
+  let synthTimer = null;
+
+  // 2. Bộ nhạc tổng hợp Web Audio API (Lofi Piano ấm áp, du dương tri ân thầy cô)
+  // Giai điệu nhẹ nhàng dựa trên thang âm Pentatonic / C major êm dịu
+  const melodyNotes = [
+    // Giai điệu hoài niệm nhẹ nhàng (tần số Hz)
+    261.63, 293.66, 329.63, 392.00, 440.00, 523.25,
+    392.00, 329.63, 293.66, 261.63, 329.63, 392.00,
+    440.00, 523.25, 587.33, 523.25, 440.00, 392.00,
+    329.63, 293.66, 261.63, 196.00, 220.00, 261.63
+  ];
+  let noteIndex = 0;
+
+  function initSynth() {
+    if (!synthContext) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) synthContext = new AudioCtx();
+    }
+    if (synthContext && synthContext.state === 'suspended') {
+      synthContext.resume();
+    }
+  }
+
+  function playTone(freq, duration = 1.2) {
+    if (isMuted || !synthContext) return;
+    try {
+      const osc = synthContext.createOscillator();
+      const gain = synthContext.createGain();
+      const now = synthContext.currentTime;
+
+      // Sóng sine mềm mại mô phỏng tiếng chuông gió / piano điện
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.08, now + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(synthContext.destination);
+
+      osc.start(now);
+      osc.stop(now + duration);
+    } catch (e) {
+      // Bỏ qua lỗi audio
+    }
+  }
+
+  function startSynthMelody() {
+    if (synthTimer) clearInterval(synthTimer);
+    initSynth();
+    synthTimer = setInterval(() => {
+      if (!isMuted && useSynth) {
+        const freq = melodyNotes[noteIndex % melodyNotes.length];
+        playTone(freq, 1.4);
+        // Đôi lúc điểm thêm hợp âm trầm
+        if (noteIndex % 4 === 0) {
+          playTone(freq / 2, 2.0);
+        }
+        noteIndex++;
+      }
+    }, 900);
+  }
+
+  function stopSynthMelody() {
+    if (synthTimer) {
+      clearInterval(synthTimer);
+      synthTimer = null;
+    }
+  }
+
+  // Khởi động phát nhạc
+  function startMusic() {
+    if (isMuted) return;
+
+    // Kiểm tra xem audio file có chạy được không
+    audioEl.play().then(() => {
+      useSynth = false;
+    }).catch(() => {
+      // Trình duyệt chặn autoplay hoặc file không tồn tại -> chuyển sang Web Audio Synth
+      useSynth = true;
+      startSynthMelody();
+    });
+  }
+
+  function updateButtonUI() {
+    if (isMuted) {
+      musicBtn.classList.add('muted');
+      musicBtn.innerHTML = `
+        <span class="music-icon">🔇</span>
+      `;
+    } else {
+      musicBtn.classList.remove('muted');
+      musicBtn.innerHTML = `
+        <span class="music-icon">🎵</span>
+      `;
+    }
+  }
+
+  // Xử lý bật / tắt khi bấm nút
+  musicBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    isMuted = !isMuted;
+    localStorage.setItem('bg_music_muted', isMuted);
+    updateButtonUI();
+
+    if (isMuted) {
+      audioEl.pause();
+      stopSynthMelody();
+    } else {
+      startMusic();
+    }
+  });
+
+  // Nếu người dùng vừa nhấn "Viết lên bảng" từ index, tự động phát nhạc ngay
+  if (sessionStorage.getItem('music_started') === 'true' && !isMuted) {
+    startMusic();
+  }
+
+  // Tương tác của người dùng trên trang sẽ mở khoá âm thanh nếu trình duyệt hạn chế autoplay
+  function handleFirstUserGesture() {
+    if (!isMuted) {
+      startMusic();
+    }
+    window.removeEventListener('click', handleFirstUserGesture);
+    window.removeEventListener('keydown', handleFirstUserGesture);
+    window.removeEventListener('touchstart', handleFirstUserGesture);
+  }
+
+  window.addEventListener('click', handleFirstUserGesture);
+  window.addEventListener('keydown', handleFirstUserGesture);
+  window.addEventListener('touchstart', handleFirstUserGesture);
+
+  // Cập nhật trạng thái ban đầu
+  updateButtonUI();
+})();

@@ -1,0 +1,186 @@
+/* ============================================
+   MEMORY.CSS — Sổ Ký Ức Ô Ly
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --board-dark:  #1e293b;
+  --board-bg:    #0f172a;
+  --wood:        #92400e;
+  --wood-mid:    #b45309;
+  --chalk-white: #f8fafc;
+  --chalk-cream: #e2e8f0;
+  --chalk-yellow:#fde68a;
+  --chalk-red:   #fca5a5;
+}
+
+html, body {
+  height: 100%; overflow: hidden;
+  font-family: 'Quicksand', sans-serif;
+  background: var(--board-bg);
+}
+
+/* ---- Layout tổng ---- */
+.scene {
+  display: flex;
+  height: 100vh;
+  padding: 16px;
+  gap: 16px;
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  width: 220px; min-width: 180px;
+  background: rgba(30,41,59,0.95);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  padding: 20px 14px;
+  display: flex; flex-direction: column; gap: 18px;
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.5rem; color: var(--chalk-yellow);
+  letter-spacing: 0.5px;
+}
+.sidebar-desc {
+  font-size: 0.82rem; color: var(--chalk-cream);
+  opacity: 0.7; line-height: 1.5;
+}
+
+.tool-section {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.tool-label {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1rem; color: var(--chalk-cream); opacity: 0.8;
+}
+
+/* Palette màu */
+.color-palette {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.color-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer; transition: all 0.2s;
+  flex-shrink: 0;
+}
+.color-btn.active, .color-btn:hover {
+  border-color: var(--chalk-yellow);
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(253,230,138,0.4);
+}
+
+/* Brush size slider */
+.brush-slider {
+  width: 100%; accent-color: var(--chalk-yellow);
+  cursor: pointer;
+}
+.brush-label {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 0.95rem; color: var(--chalk-cream); opacity: 0.7;
+}
+
+/* Nút upload ảnh */
+.upload-btn-label {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  background: rgba(253,230,138,0.1);
+  border: 1px dashed rgba(253,230,138,0.6);
+  color: var(--chalk-yellow);
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  display: block;
+}
+.upload-btn-label:hover {
+  background: rgba(253,230,138,0.2);
+  transform: translateY(-1px);
+}
+.upload-hint {
+  font-size: 0.72rem;
+  color: var(--chalk-cream);
+  opacity: 0.6;
+  line-height: 1.3;
+}
+
+/* Action buttons */
+.action-btn {
+  font-family: 'Baloo 2', sans-serif; font-size: 1rem;
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid rgba(248,250,252,0.3);
+  color: var(--chalk-cream); border-radius: 4px;
+  cursor: pointer; letter-spacing: 0.5px;
+  transition: all 0.2s; text-align: left;
+}
+.action-btn:hover { background: rgba(255,255,255,0.05); }
+.erase-btn:hover  { border-color: #93c5fd; color: #93c5fd; }
+.clear-btn:hover  { border-color: #fca5a5; color: #fca5a5; }
+.save-btn {
+  border-color: rgba(134,239,172,0.5); color: #86efac;
+  font-weight: 600;
+}
+.save-btn:hover   { background: rgba(134,239,172,0.08); }
+
+.back-link {
+  font-family: 'Baloo 2', sans-serif; font-size: 0.95rem;
+  color: rgba(248,250,252,0.4); text-decoration: none;
+  margin-top: auto; transition: color 0.2s;
+}
+.back-link:hover { color: var(--chalk-red); }
+
+/* ---- Vùng sổ ---- */
+.notebook-wrap {
+  flex: 1;
+  display: flex; flex-direction: column;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.5), 4px 0 0 #d1d5db inset;
+  /* Hiệu ứng bìa sổ bên trái */
+  border-left: 10px solid #ef4444;
+}
+
+/* Header sổ */
+.notebook-header {
+  background: #f1f5f9;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 10px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.notebook-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.4rem; color: #1e293b;
+  font-weight: 600;
+}
+.notebook-date {
+  font-size: 0.82rem; color: #64748b;
+}
+
+/* Trang ô ly */
+.notebook-page-wrap {
+  flex: 1; position: relative; overflow: hidden;
+}
+
+#notebookCanvas {
+  display: block;
+  cursor: crosshair;
+  /* Canvas sẽ được set size bằng JS */
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .scene { flex-direction: column; padding: 8px; gap: 8px; }
+  .sidebar { width: 100%; min-width: unset; flex-direction: row; flex-wrap: wrap; padding: 10px; gap: 10px; }
+  .sidebar-desc { display: none; }
+  .notebook-wrap { flex: 1; }
+}

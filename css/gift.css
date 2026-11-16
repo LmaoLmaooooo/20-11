@@ -1,0 +1,269 @@
+/* ============================================
+   GIFT.CSS — Hộp Quà 20/11 (Đỏ đô + Nơ vàng gỗ)
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Quicksand:wght@400;600&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  min-height: 100vh;
+  display: grid; place-items: center;
+  font-family: 'Baloo 2', sans-serif;
+  background: radial-gradient(ellipse at bottom, #1e293b 0%, #0f172a 100%);
+  overflow: hidden;
+}
+
+.gift-scene {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 24px;
+  padding: 20px;
+}
+
+.gift-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  color: #fca5a5;
+  text-align: center;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(252,165,165,0.3);
+}
+
+/* ---- Hộp quà (fork từ suprise.css, đổi màu) ---- */
+.box {
+  position: relative;
+  width: 18em; height: 18em;
+}
+
+.box-tape, .box-tape-left, .box-tape-right,
+.box-tape-center, .box-gifts, .box-gifts-shadow,
+.box-gift, .box-star {
+  position: absolute;
+}
+
+/* Màu nơ: vàng gỗ */
+.box-tape-center, .box-tape-left, .box-tape-right {
+  background-color: #b45309;
+}
+
+.box-tape {
+  animation: bTape 1.5s ease-in-out infinite;
+  bottom: 11em; left: 7.5em;
+  width: 3em; height: 2em;
+  transform-origin: 50% 230%;
+}
+.box-tape-center { border-radius: 1em; width:100%; height:100%; }
+.box-tape-left, .box-tape-right {
+  box-shadow: 0 0 0 0.7em #d97706 inset;
+  top: 0.3em; width: 4em; height: 5em; z-index: -1;
+}
+.box-tape-left::before, .box-tape-right::before {
+  background-color: #d97706;
+  border-radius: inherit; content:""; display:block;
+  position:absolute; inset:0;
+}
+.box-tape-left {
+  animation: bLeft 1.5s ease-in-out infinite;
+  border-radius: 1.5em 0 3em 1em / 1.5em 0 3em 3.5em;
+  right: calc(100% - 0.75em);
+  transform: rotate(35deg); transform-origin: 100% 15%;
+}
+.box-tape-left::before { clip-path: polygon(0 42%, 100% 12%, 100% 100%, 0 100%); }
+.box-tape-right {
+  animation: bRight 1.5s ease-in-out infinite;
+  border-radius: 0 1.5em 1em 3em / 0 1.5em 3.5em 3em;
+  left: calc(100% - 0.75em);
+  transform: rotate(-35deg); transform-origin: 0% 15%;
+}
+.box-tape-right::before { clip-path: polygon(0 12%, 100% 42%, 100% 100%, 0 100%); }
+
+.box-gift, .box-gifts, .box-gifts-shadow { transform-origin: 50% 100%; }
+
+/* Màu hộp: đỏ đô */
+.box-gifts {
+  animation: box-Bounce 1.5s ease-in-out infinite;
+  background: linear-gradient(#b45309, #b45309) 50% 50% / 3.3em 100% no-repeat, #991b1b;
+  border-radius: 1.5em;
+  bottom: 0.5em; left: 3.3em;
+  overflow: hidden; width: 11.4em; height: 9em;
+}
+.box-gift, .box-gifts-shadow { border-radius: 1em; width: 13em; height: 3.3em; }
+.box-gift {
+  animation: box-Bounce2 1.5s ease-in-out infinite;
+  background: linear-gradient(#b45309, #b45309) 50% 50% / 3.3em 100% no-repeat, #7f1d1d;
+  bottom: 8.7em; left: 2.5em;
+}
+.box-gifts-shadow {
+  animation: boxShadowBounce 1.5s ease-in-out infinite;
+  background-color: #00000010;
+  top: -1.5em; left: -1em;
+}
+
+/* Sao vàng */
+.box-star {
+  animation: starRotate1 1.5s ease-in-out infinite;
+  background-color: #fde68a;
+  clip-path: polygon(50% 0, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0 50%, 35% 35%);
+  transform: scale(0);
+}
+.box-star-2, .box-star-4, .box-star-5 { animation-name: starRotate2; }
+.box-star-1 { animation-delay: calc(1.5s * 0.5);   top:0;    left:12.5em; width:1.5em;  height:1.5em; }
+.box-star-2 { animation-delay: calc(1.5s * 0.125); top:2em;  left:10em;   width:1.75em; height:1.75em; }
+.box-star-3 { animation-delay: calc(1.5s * 0.25);  top:8em;  left:0;      width:1.25em; height:1.25em; }
+.box-star-4 {                                       top:10.5em; left:0;    width:1.75em; height:1.75em; }
+.box-star-5 { animation-delay: calc(1.5s * 0.375); top:12em; left:1.8em;  width:1.75em; height:1.75em; }
+
+/* ---- Nút mở quà ---- */
+#openGiftBtn {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.3rem; font-weight: 700;
+  padding: 10px 28px;
+  background: transparent;
+  border: 2px solid rgba(253,230,138,0.6);
+  color: #fde68a; border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.25s;
+}
+#openGiftBtn:hover { background: rgba(253,230,138,0.08); transform: translateY(-2px); }
+#openGiftBtn:active { transform: translateY(0); }
+
+/* ---- Quay về ---- */
+.back-btn {
+  font-family: 'Baloo 2', sans-serif; font-size: 1rem;
+  padding: 6px 20px;
+  background: transparent;
+  border: 1px solid rgba(248,250,252,0.25);
+  color: rgba(248,250,252,0.5); border-radius: 4px;
+  cursor: pointer; text-decoration: none; display: inline-block;
+  transition: all 0.25s;
+}
+.back-btn:hover { border-color: #fca5a5; color: #fca5a5; }
+
+/* ---- Modal ---- */
+#overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 999;
+  backdrop-filter: blur(4px);
+}
+#imageModal {
+  display: none; position: fixed;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 1000; max-width: 92vw; width: 440px;
+  animation: modalPopup 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes modalPopup {
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+.modal-inner {
+  background: #1e293b;
+  border: 2px solid rgba(253,230,138,0.4);
+  border-radius: 12px; padding: 22px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column; gap: 14px;
+  align-items: center;
+}
+.modal-msg {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem; color: #fde68a; letter-spacing: 0.5px;
+}
+.gift-img-frame {
+  width: 100%;
+  max-height: 52vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px;
+  overflow: hidden;
+}
+.modal-inner img {
+  max-width: 100%;
+  max-height: 48vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+}
+.modal-footer-text {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fca5a5;
+  line-height: 1.4;
+}
+.close-btn {
+  font-family: 'Baloo 2', sans-serif; font-size: 1rem;
+  font-weight: 700;
+  padding: 6px 24px;
+  background: rgba(248, 250, 252, 0.1);
+  border: 1px solid rgba(248,250,252,0.4);
+  color: #f8fafc; border-radius: 6px;
+  cursor: pointer; transition: all 0.2s;
+}
+.close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #fca5a5;
+  color: #fca5a5;
+}
+
+/* ---- Keyframes (copy từ suprise.css) ---- */
+@keyframes bTape {
+  from, 50% { transform: translateY(0) rotate(0); }
+  62.5%     { transform: translateY(75%) rotate(0); }
+  68.75%    { transform: translateY(-37.5%) rotate(15deg); }
+  75%       { transform: translateY(-150%) rotate(5deg); }
+  87.5%     { transform: translateY(65%) rotate(-3deg); }
+  to        { transform: translateY(0) rotate(0); }
+}
+@keyframes bLeft {
+  from, 50% { transform: rotate(35deg); }
+  62.5%     { transform: rotate(45deg); }
+  75%       { transform: rotate(30deg); }
+  87.5%     { transform: rotate(45deg); }
+  to        { transform: rotate(35deg); }
+}
+@keyframes bRight {
+  from, 50% { transform: rotate(-35deg); }
+  62.5%     { transform: rotate(-45deg); }
+  75%       { transform: rotate(-30deg); }
+  87.5%     { transform: rotate(-45deg); }
+  to        { transform: rotate(-35deg); }
+}
+@keyframes box-Bounce {
+  from, 50% { transform: translateY(0) scale(1,1); }
+  62.5%     { transform: translateY(4%) scale(1.12, 0.89); }
+  75%       { transform: translateY(-11%) scale(0.92, 1.1); }
+  87.5%     { transform: translateY(0%) scale(1.05, 0.9); }
+  to        { transform: translateY(0) scale(1,1); }
+}
+@keyframes box-Bounce2 {
+  from, 50% { transform: translateY(0) scale(1,1) rotate(0); }
+  62.5%     { animation-timing-function: ease-out; transform: translateY(45%) scale(1.14, 0.95) rotate(0); }
+  68.75%    { animation-timing-function: ease-out; transform: translateY(-37.5%) scale(1.05, 1.03) rotate(15deg); }
+  75%       { animation-timing-function: ease-out; transform: translateY(-150%) scale(0.96, 1.1) rotate(5deg); }
+  87.5%     { transform: translateY(65%) scale(1.12, 0.93) rotate(-3deg); }
+  to        { transform: translateY(0) scale(1,1) rotate(0); }
+}
+@keyframes boxShadowBounce {
+  from, 50% { transform: translateY(0) scale(1,1) rotate(0); }
+  62.5%     { animation-timing-function: ease-out; transform: translateY(10%) scale(1.14, 0.95) rotate(0); }
+  68.75%    { animation-timing-function: ease-out; transform: translateY(-10%) scale(1.05, 1.03) rotate(15deg); }
+  75%       { animation-timing-function: ease-out; transform: translateY(-30%) scale(0.96, 1.1) rotate(5deg); }
+  87.5%     { transform: translateY(10%) scale(1.12, 0.93) rotate(-3deg); }
+  to        { transform: translateY(0) scale(1,1) rotate(0); }
+}
+@keyframes starRotate1 {
+  from { transform: scale(0) rotate(0); }
+  25%  { animation-timing-function: ease-out; transform: scale(1) rotate(0.25turn); }
+  50%, to { transform: scale(0) rotate(0.5turn); }
+}
+@keyframes starRotate2 {
+  from { transform: scale(0) rotate(0); }
+  25%  { animation-timing-function: ease-out; transform: scale(1) rotate(-0.25turn); }
+  50%, to { transform: scale(0) rotate(-0.5turn); }
+}

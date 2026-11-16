@@ -1,0 +1,291 @@
+/* ============================================
+   BLACKBOARD.CSS
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+:root {
+  --board-dark:   #1e293b;
+  --board-darker: #0f172a;
+  --chalk-white:  #f8fafc;
+  --chalk-cream:  #e2e8f0;
+  --wood-dark:    #92400e;
+  --wood-mid:     #b45309;
+  --wood-light:   #d97706;
+  --chalk-red:    #fca5a5;
+  --chalk-yellow: #fde68a;
+  --chalk-green:  #86efac;
+  --chalk-blue:   #93c5fd;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Quicksand', sans-serif;
+  background: var(--board-darker);
+  overflow: hidden;
+}
+
+/* ---- Khung gỗ bảng ---- */
+.board-frame {
+  position: fixed;
+  inset: 0;
+  padding: 18px;
+  background: var(--wood-dark);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px,
+      transparent 1px, transparent 20px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px,
+      transparent 1px, transparent 30px
+    );
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+  display: flex; align-items: stretch;
+}
+
+.board-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(0,0,0,0.3) 0%, transparent 8%, transparent 92%, rgba(0,0,0,0.3) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 8%, transparent 92%, rgba(0,0,0,0.3) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Thanh gỗ dưới  */
+.board-frame::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 36px;
+  background: linear-gradient(to bottom, var(--wood-mid), var(--wood-dark));
+  border-top: 3px solid var(--wood-light);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+/* Mặt bảng xanh đen */
+.board-inner {
+  position: relative;
+  flex: 1;
+  background: var(--board-dark);
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.015) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(255,255,255,0.01) 0%, transparent 60%);
+  border: 2px solid rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+  /* texture phấn mờ */
+  box-shadow:
+    inset 0 0 60px rgba(0,0,0,0.4),
+    inset 2px 2px 0 rgba(255,255,255,0.03);
+}
+
+/* Góc trang trí */
+.corner {
+  position: absolute;
+  width: 24px; height: 24px;
+  border-color: rgba(255,255,255,0.15);
+  border-style: solid;
+  z-index: 2;
+}
+.corner-tl { top: 12px; left: 12px;  border-width: 2px 0 0 2px; }
+.corner-tr { top: 12px; right: 12px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: 20px; left: 12px;  border-width: 0 0 2px 2px; }
+.corner-br { bottom: 20px; right: 12px; border-width: 0 2px 2px 0; }
+
+/* Badge đếm ngược */
+.countdown-badge {
+  position: absolute;
+  top: 14px; right: 20px;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--chalk-yellow);
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  text-align: right;
+}
+
+/* ---- Màn hình intro ---- */
+#intro-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  text-align: center;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  z-index: 5;
+}
+
+#intro-screen.fade-out {
+  opacity: 0;
+  transform: translateY(-30px);
+  pointer-events: none;
+}
+
+/* ---- Tiêu đề bảng ---- */
+.board-title {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  color: var(--chalk-white);
+  line-height: 1.25;
+  text-shadow:
+    0 0 20px rgba(248,250,252,0.15),
+    1px 1px 0 rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+}
+
+/* Hiệu ứng phấn nhấp nháy */
+@keyframes chalkFlicker {
+  0%, 89%, 100% { opacity: 1; }
+  90%            { opacity: 0.82; }
+  91%            { opacity: 1; }
+  93%            { opacity: 0.88; }
+  95%            { opacity: 1; }
+}
+.chalk-flicker {
+  animation: chalkFlicker 5s infinite;
+}
+
+/* Badge ngày */
+.date-badge {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  color: var(--chalk-yellow);
+  border: 2px dashed rgba(253,230,138,0.5);
+  padding: 4px 24px;
+  border-radius: 4px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px rgba(253,230,138,0.3);
+}
+
+.board-subtitle {
+  font-family: 'Quicksand', sans-serif;
+  font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+  font-weight: 600;
+  color: var(--chalk-cream);
+  opacity: 0.75;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Ô nhập tên ---- */
+.chalk-input-wrapper {
+  position: relative;
+}
+
+.chalk-input {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  width: min(320px, 80vw);
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px dashed rgba(248,250,252,0.5);
+  color: var(--chalk-white);
+  text-align: center;
+  outline: none;
+  letter-spacing: 0.5px;
+  caret-color: var(--chalk-yellow);
+  transition: border-color 0.3s;
+}
+
+.chalk-input::placeholder {
+  color: rgba(248,250,252,0.35);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.chalk-input:focus {
+  border-bottom-color: var(--chalk-yellow);
+}
+
+/* ---- Nút chính ---- */
+.chalk-btn {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 10px 32px;
+  background: transparent;
+  border: 2px solid rgba(248,250,252,0.6);
+  color: var(--chalk-white);
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.chalk-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.05);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.chalk-btn:hover::before { transform: scaleX(1); }
+.chalk-btn:hover {
+  border-color: var(--chalk-yellow);
+  color: var(--chalk-yellow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(253,230,138,0.15);
+}
+.chalk-btn:active { transform: translateY(0); }
+
+/* ---- Trang trí phấn ---- */
+.chalk-decoration {
+  font-family: 'Quicksand', sans-serif;
+  color: rgba(248,250,252,0.3);
+  font-size: 1rem;
+  letter-spacing: 6px;
+  user-select: none;
+}
+
+/* ---- Bụi phấn particle ---- */
+.chalk-dust {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999;
+  animation: dustFly linear forwards;
+}
+
+@keyframes dustFly {
+  0%   { opacity: 0.9; transform: translate(0,0) scale(1); }
+  100% { opacity: 0;   transform: translate(var(--tx), var(--ty)) scale(0.3); }
+}
+
+/* ---- Hidden utility ---- */
+.hidden {
+  display: none !important;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .board-frame { padding: 10px; }
+  .board-frame::after { height: 24px; }
+  .corner { width: 16px; height: 16px; }
+  #intro-screen { gap: 12px; }
+}

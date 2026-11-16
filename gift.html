@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quà Tặng 20/11</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=639304470361110811">
+  <link rel="shortcut icon" href="favicon.ico?v=639304470361110811">
+  <link rel="stylesheet" href="css/gift.css">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="gift-scene">
+    <!-- Tiêu đề -->
+    <h2 class="gift-title">🎁 Có một món quà nhỏ dành cho thầy cô...</h2>
+
+    <!-- Hộp quà tương tác: Bấm trực tiếp vào hộp hoặc nút để mở ảnh -->
+    <div class="box" id="giftBox" title="Nhấp vào hộp quà để mở!">
+      <div class="box-tape">
+        <div class="box-tape-left"></div>
+        <div class="box-tape-right"></div>
+        <div class="box-tape-center"></div>
+      </div>
+      <div class="box-gifts">
+        <div class="box-gifts-shadow"></div>
+      </div>
+      <div class="box-gift"></div>
+      <div class="box-star box-star-1"></div>
+      <div class="box-star box-star-2"></div>
+      <div class="box-star box-star-3"></div>
+      <div class="box-star box-star-4"></div>
+      <div class="box-star box-star-5"></div>
+    </div>
+
+    <!-- Nút mở quà -->
+    <button id="openGiftBtn">🎀 Mở Hộp Quà</button>
+
+    <!-- Nút quay về -->
+    <a class="back-btn" href="chalk-letter.html">← Quay lại lời chúc</a>
+  </div>
+
+  <!-- Modal mở quà hiển thị ảnh -->
+  <div id="overlay"></div>
+  <div id="imageModal">
+    <div class="modal-inner">
+      <p class="modal-msg">🌹 Món quà nhỏ, lòng biết ơn lớn gửi đến Thầy Cô 🌹</p>
+      
+      <!-- Ảnh quà tặng từ img/gift-2011.jpg -->
+      <div class="gift-img-frame">
+        <img id="giftImage" src="img/gift-2011.jpg" alt="Món quà 20/11">
+      </div>
+
+      <div class="modal-footer-text">
+        Chúc Thầy Cô luôn tràn đầy niềm vui, hạnh phúc và bình an! 💖
+      </div>
+
+      <button class="close-btn" id="closeModal">✕ Đóng</button>
+    </div>
+  </div>
+
+  <script src="js/gift.js"></script>
+  <script src="js/music.js"></script>
+</body>
+</html>
+
+
