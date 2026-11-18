@@ -1,6 +1,6 @@
 // ============================================================
 // music.js — Quản lý nhạc nền & nút Bật/Tắt âm thanh toàn website
-// Hỗ trợ cả file MP3 (nếu có trong audio/) và bộ nhạc tổng hợp Web Audio API du dương
+// Tự động lưu tiến độ (playback time) để nhạc tiếp tục phát mượt mà khi chuyển trang
 // ============================================================
 
 (function () {
@@ -86,25 +86,67 @@
 
   let isMuted = localStorage.getItem('bg_music_muted') === 'true';
 
-  // 1. Thử phát từ audio file (nếu người dùng bỏ file bg-music.mp3 vào thư mục audio/)
+  // 1. Audio element phát file audio/bg-music.mp3
   const audioEl = new Audio('audio/bg-music.mp3');
   audioEl.loop = true;
   audioEl.volume = 0.5;
+
+  // Lấy lại vị trí thời gian bài hát từ lần chuyển trang trước
+  const savedCurrentTime = parseFloat(sessionStorage.getItem('bg_music_time') || '0');
+  const savedTimestamp = parseFloat(sessionStorage.getItem('bg_music_timestamp') || '0');
+
+  // Ước tính vị trí thời gian nếu nhạc vẫn đang phát trong khi chuyển trang
+  let targetTime = savedCurrentTime;
+  if (savedTimestamp > 0 && !isMuted) {
+    const elapsedSeconds = (Date.now() - savedTimestamp) / 1000;
+    // Bù thêm thời gian chuyển trang nếu hợp lệ
+    if (elapsedSeconds > 0 && elapsedSeconds < 30) {
+      targetTime = savedCurrentTime + elapsedSeconds;
+    }
+  }
+
+  // Khi audio metadata sẵn sàng, tua tới vị trí đã lưu
+  audioEl.addEventListener('loadedmetadata', () => {
+    if (targetTime > 0 && targetTime < audioEl.duration) {
+      audioEl.currentTime = targetTime;
+    }
+  });
+
+  // Liên tục lưu vị trí hiện tại của bài hát vào sessionStorage
+  let saveInterval = null;
+  function startTracking() {
+    if (saveInterval) clearInterval(saveInterval);
+    saveInterval = setInterval(() => {
+      if (!audioEl.paused && !isNaN(audioEl.currentTime)) {
+        sessionStorage.setItem('bg_music_time', audioEl.currentTime.toString());
+        sessionStorage.setItem('bg_music_timestamp', Date.now().toString());
+      }
+    }, 300);
+  }
+
+  // Lưu ngay thời điểm rời trang (trước khi chuyển trang)
+  window.addEventListener('beforeunload', () => {
+    if (!audioEl.paused && !isNaN(audioEl.currentTime)) {
+      sessionStorage.setItem('bg_music_time', audioEl.currentTime.toString());
+      sessionStorage.setItem('bg_music_timestamp', Date.now().toString());
+    } else if (useSynth) {
+      sessionStorage.setItem('bg_music_synth_idx', noteIndex.toString());
+      sessionStorage.setItem('bg_music_timestamp', Date.now().toString());
+    }
+  });
 
   let useSynth = false;
   let synthContext = null;
   let synthTimer = null;
 
-  // 2. Bộ nhạc tổng hợp Web Audio API (Lofi Piano ấm áp, du dương tri ân thầy cô)
-  // Giai điệu nhẹ nhàng dựa trên thang âm Pentatonic / C major êm dịu
+  // 2. Bộ nhạc tổng hợp Web Audio API (dự phòng khi không load được mp3)
   const melodyNotes = [
-    // Giai điệu hoài niệm nhẹ nhàng (tần số Hz)
     261.63, 293.66, 329.63, 392.00, 440.00, 523.25,
     392.00, 329.63, 293.66, 261.63, 329.63, 392.00,
     440.00, 523.25, 587.33, 523.25, 440.00, 392.00,
     329.63, 293.66, 261.63, 196.00, 220.00, 261.63
   ];
-  let noteIndex = 0;
+  let noteIndex = parseInt(sessionStorage.getItem('bg_music_synth_idx') || '0', 10);
 
   function initSynth() {
     if (!synthContext) {
@@ -123,7 +165,6 @@
       const gain = synthContext.createGain();
       const now = synthContext.currentTime;
 
-      // Sóng sine mềm mại mô phỏng tiếng chuông gió / piano điện
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now);
 
@@ -148,11 +189,11 @@
       if (!isMuted && useSynth) {
         const freq = melodyNotes[noteIndex % melodyNotes.length];
         playTone(freq, 1.4);
-        // Đôi lúc điểm thêm hợp âm trầm
         if (noteIndex % 4 === 0) {
           playTone(freq / 2, 2.0);
         }
         noteIndex++;
+        sessionStorage.setItem('bg_music_synth_idx', noteIndex.toString());
       }
     }, 900);
   }
@@ -168,9 +209,16 @@
   function startMusic() {
     if (isMuted) return;
 
-    // Kiểm tra xem audio file có chạy được không
+    // Thiết lập thời gian nếu audio đã sẵn sàng
+    if (targetTime > 0 && audioEl.readyState >= 1) {
+      try {
+        audioEl.currentTime = targetTime;
+      } catch (e) {}
+    }
+
     audioEl.play().then(() => {
       useSynth = false;
+      startTracking();
     }).catch(() => {
       // Trình duyệt chặn autoplay hoặc file không tồn tại -> chuyển sang Web Audio Synth
       useSynth = true;
@@ -183,11 +231,13 @@
       musicBtn.classList.add('muted');
       musicBtn.innerHTML = `
         <span class="music-icon">🔇</span>
+        <span class="music-text">Nhạc: Tắt</span>
       `;
     } else {
       musicBtn.classList.remove('muted');
       musicBtn.innerHTML = `
         <span class="music-icon">🎵</span>
+        <span class="music-text">Nhạc: Bật</span>
       `;
     }
   }
@@ -202,19 +252,20 @@
     if (isMuted) {
       audioEl.pause();
       stopSynthMelody();
+      if (saveInterval) clearInterval(saveInterval);
     } else {
       startMusic();
     }
   });
 
-  // Nếu người dùng vừa nhấn "Viết lên bảng" từ index, tự động phát nhạc ngay
+  // Nếu người dùng vừa nhấn "Viết lên bảng" từ index hoặc đang trong phiên duyệt web
   if (sessionStorage.getItem('music_started') === 'true' && !isMuted) {
     startMusic();
   }
 
   // Tương tác của người dùng trên trang sẽ mở khoá âm thanh nếu trình duyệt hạn chế autoplay
   function handleFirstUserGesture() {
-    if (!isMuted) {
+    if (!isMuted && audioEl.paused && !synthTimer) {
       startMusic();
     }
     window.removeEventListener('click', handleFirstUserGesture);
