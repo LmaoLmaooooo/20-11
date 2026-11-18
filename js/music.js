@@ -16,7 +16,6 @@
   musicBtn.setAttribute('title', 'Bật / Tắt âm thanh');
   musicBtn.innerHTML = `
     <span class="music-icon">🎵</span>
-    <span class="music-text">Nhạc: Bật</span>
   `;
 
   // Thêm CSS cho nút âm thanh
@@ -231,13 +230,11 @@
       musicBtn.classList.add('muted');
       musicBtn.innerHTML = `
         <span class="music-icon">🔇</span>
-        <span class="music-text">Nhạc: Tắt</span>
       `;
     } else {
       musicBtn.classList.remove('muted');
       musicBtn.innerHTML = `
         <span class="music-icon">🎵</span>
-        <span class="music-text">Nhạc: Bật</span>
       `;
     }
   }
